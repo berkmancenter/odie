@@ -6,14 +6,25 @@ The Online Discourse Insight Explorer will let users visualize how various media
 
 
 ## OS X setup instructions
-* `brew install elasticsearch@5.6` (if you don't already have it from Lumen)
-* `brew install kibana@5.6`
-* `brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/2ca15b6ae0701f98985a53e7b7daab5f8ee5f1d1/Formula/logstash.rb`
+First, install dependencies:
+* `brew install elasticsearch`
+* `brew install kibana`
+* `brew install logstash`
+* `logstash-plugin install logstash-input-twitter`
 
-You need the wild formula for logstash because homebrew no longer supplies versions <6.5, but elasticsearch 5.6 is only compatible with logstash <= 6.0.x. That's the commit where the formula was updated to logstash 6.0.1 (the latest available 6.0 release).
+This has been tested with elasticsearch 6.5, kibana 6.5, and logstash 6.6.
 
-* `brew services start elasticsearch@5.6`
-* `brew services start logstash`
-* `brew services start kibana@5.6`
+Second, copy `config/twitter.conf.example` to `config/twitter.conf`, editing in your local values.
+
+A good `keywords` value for testing is `["kittens"]`, which is guaranteed to have fast results.
+
+## Running
+* `brew services start elasticsearch`
+* `brew services start kibana`
+* `logstash -f config/twitter.conf`
 
 http://localhost:9200 should now show that elasticsearch is alive. http://localhost:5601 should now show a default kibana page.
+
+## Troubleshooting
+
+* Special characters in the `twitter.conf` `keywords` value can cause `Twitter::Error::Unauthorized`.
